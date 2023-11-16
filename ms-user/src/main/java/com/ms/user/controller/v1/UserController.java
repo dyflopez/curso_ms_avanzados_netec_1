@@ -25,7 +25,7 @@ public class UserController implements UserDoc {
     @Override
     @GetMapping
     public ResponseEntity getAll() {
-        return null;
+        return this.iUserService.getAll();
     }
 
     @Override
