@@ -40,10 +40,10 @@ public class HandleException {
 
         List<String> errors = new ArrayList<>();
         for (FieldError error: ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField()+ ":" + error.getDefaultMessage() );
+            errors.add(error.getField()+ " : " + error.getDefaultMessage() );
         }
         log.error(
-                "error systema " + "error info {}" ,errors
+                "error systema " + "error info \n{}" ,errors
         );
 
         return  ResponseEntity.badRequest().body(errors);
