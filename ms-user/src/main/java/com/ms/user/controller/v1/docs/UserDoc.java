@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
+
 @Tag(name = "User Controller" ,description = "API EXPOSED FOR CRUD operations on users")
 public interface UserDoc {
 
@@ -28,7 +30,7 @@ public interface UserDoc {
                     description =  "bad request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
-    ResponseEntity create (@RequestBody UserDTO userDTO);
+    ResponseEntity create (@Valid @RequestBody UserDTO userDTO);
 
 
     @Operation(summary ="List users"  ,
