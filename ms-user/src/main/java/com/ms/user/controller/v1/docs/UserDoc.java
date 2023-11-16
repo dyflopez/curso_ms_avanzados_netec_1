@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.coyote.Response;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,5 +29,34 @@ public interface UserDoc {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     ResponseEntity create (@RequestBody UserDTO userDTO);
+
+
+    @Operation(summary ="List users"  ,
+            description = "this operation is for getting all users")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode ="200" ,
+                    description =  "list of user generate succesfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(
+                    responseCode ="400" ,
+                    description =  "bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+    })
+    ResponseEntity getAll();
+
+    @Operation(summary ="get user by Id"  ,
+            description = "this operation is for getting a user by id")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode ="200" ,
+                    description =  "getting user generate succesfully",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(
+                    responseCode ="400" ,
+                    description =  "bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+    })
+    ResponseEntity getById(String id);
 
 }
