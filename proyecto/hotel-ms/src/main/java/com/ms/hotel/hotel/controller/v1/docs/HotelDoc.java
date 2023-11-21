@@ -1,7 +1,5 @@
-package com.ms.hotel.controller.v1.docs;
+package com.ms.hotel.hotel.controller.v1.docs;
 
-
-import com.ms.hotel.dto.HotelDTO;
 import com.ms.hotel.hotel.dto.HotelDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +26,7 @@ public interface HotelDoc {
     })
     ResponseEntity create(
             @RequestBody @Valid HotelDto hotelDto
-    );
+            );
 
     @Operation(summary = "List hotels ",
             description = "This operation is for getting all hotels")
@@ -68,5 +66,5 @@ public interface HotelDoc {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
-    ResponseEntity updateById(@PathVariable UUID id  , @RequestBody @Valid HotelDTO hotelDto);
+    ResponseEntity updateById(@PathVariable UUID id  , @RequestBody @Valid HotelDto hotelDto);
 }
