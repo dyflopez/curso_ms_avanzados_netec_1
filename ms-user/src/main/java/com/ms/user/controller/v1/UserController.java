@@ -32,7 +32,7 @@ public class UserController implements UserDoc {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity getById(String id) {
-         throw  new  MyHandleException("Metodo no construido");
+       return this.iUserService.getById(id);
 
     }
 
