@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  application:
+    name: MS-USER
   datasource:
     url: jdbc:mysql://localhost:3308/userdb
     username: root
@@ -23,3 +25,12 @@ control:
   exception:
     personalizada: Se genero un error de negocio
     system: Se genero un error del sistema
+#eureka
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
