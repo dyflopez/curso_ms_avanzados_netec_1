@@ -34,3 +34,16 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+resilience4j:
+  circuitbreaker:
+    instances:
+      responseCircuitBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50 #
+        minimumNumberOfCalls: 5 # Si fallan 5 se abre el corto circuito
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10 # maxima cantidad de peticiones se abre minimumNumberOfCalls
+        slidingWindowType: COUNT_BASED

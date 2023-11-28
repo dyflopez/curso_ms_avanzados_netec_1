@@ -1,6 +1,7 @@
 package com.ms.user.service.impl;
 
 
+import com.ms.user.config.HotelServiceFeing;
 import com.ms.user.dto.HotelDTO;
 import com.ms.user.dto.RankingDTO;
 import com.ms.user.dto.UserDTO;
@@ -11,6 +12,7 @@ import com.ms.user.model.UserEntity;
 import com.ms.user.repository.UserRepository;
 import com.ms.user.service.IUserService;
 import lombok.AllArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class ServiceImpl implements IUserService {
     private final RestTemplate restTemplate;
 
     private  final UserRepository userRepository;
+
+    private final HotelServiceFeing hotelServiceFeing;
     @Override
     public ResponseEntity create(UserDTO userDTO) {
 
@@ -56,6 +60,16 @@ public class ServiceImpl implements IUserService {
                 .findById(id)
                 .orElseThrow(  () -> new MyHandleException("User does not exist"));
 
+        var response = this.getInformationWithOpenFeingAndRestTemplate(user);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    private UserRankingsDTO getInformationWithOpenFeingAndRestTemplate(UserEntity user)
+    {
+
         UserRankingsDTO userRankingsDTO = new UserRankingsDTO();
 
         userRankingsDTO.setName(user.getName());
@@ -65,7 +79,38 @@ public class ServiceImpl implements IUserService {
 
         RankingDTO[] rankingsResponse =  this
                 .restTemplate
-                .getForObject("http://localhost:8083/rankings/user/"+user.getId(), RankingDTO[].class);
+                .getForObject("http://MS-RANKING/rankings/user/"+user.getId(), RankingDTO[].class);
+
+        var rankings = Arrays.stream(rankingsResponse).collect(Collectors.toList());
+
+
+        rankings
+                .stream()
+                .map(
+                        ranking ->{
+                            var hotel =this.hotelServiceFeing.getHotel(ranking.getHotelId());
+
+                            ranking.setHotelDTO(hotel);
+                            return ranking;
+                        }
+                ).collect(Collectors.toList());
+
+
+        userRankingsDTO.setRankings(rankings);
+        return userRankingsDTO;
+    }
+
+    private UserRankingsDTO getWithRestTemplate(UserEntity user){
+        UserRankingsDTO userRankingsDTO = new UserRankingsDTO();
+
+        userRankingsDTO.setName(user.getName());
+        userRankingsDTO.setEmail(user.getEmail());
+        userRankingsDTO.setInformation(user.getInformation());
+        userRankingsDTO.setDocument(user.getDocument());
+
+        RankingDTO[] rankingsResponse =  this
+                .restTemplate
+                .getForObject("http://MS-RANKING/rankings/user/"+user.getId(), RankingDTO[].class);
 
         var rankings = Arrays.stream(rankingsResponse).collect(Collectors.toList());
 
@@ -77,7 +122,7 @@ public class ServiceImpl implements IUserService {
                             ResponseEntity<HotelDTO> hotelResponse =
                                     this
                                             .restTemplate
-                                            .getForEntity("http://localhost:9090/hotel/"+ranking.getHotelId(), HotelDTO.class);
+                                            .getForEntity("http://MS-HOTEL/hotel/"+ranking.getHotelId(), HotelDTO.class);
                             var hotel = hotelResponse.getBody();
                             ranking.setHotelDTO(hotel);
 
@@ -87,9 +132,6 @@ public class ServiceImpl implements IUserService {
 
 
         userRankingsDTO.setRankings(rankings);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userRankingsDTO);
+        return userRankingsDTO;
     }
-
-
 }

@@ -2,8 +2,10 @@ package com.ms.user.controller.v1;
 
 import com.ms.user.controller.v1.docs.UserDoc;
 import com.ms.user.dto.UserDTO;
+import com.ms.user.dto.UserRankingsDTO;
 import com.ms.user.exception.MyHandleException;
 import com.ms.user.service.IUserService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +33,21 @@ public class UserController implements UserDoc {
 
     @Override
     @GetMapping("/{id}")
+    @CircuitBreaker(name = "responseCircuitBreaker",fallbackMethod = "responseFallBack")
     public ResponseEntity getById(String id) {
        return this.iUserService.getById(id);
 
+    }
+
+    public ResponseEntity responseFallBack(String userId,Exception exception){
+        UserRankingsDTO user = UserRankingsDTO
+                .builder()
+                .email("daniel0223@hotmail.es")
+                .name("daniel")
+                .information(exception.getMessage())
+                .build();
+
+        return ResponseEntity.ok(user);
     }
 
 }
