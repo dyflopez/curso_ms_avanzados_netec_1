@@ -1,4 +1,4 @@
-package com.ms.email.msemial.configs;
+package com.ms.user.config;
 
 
 import lombok.Data;
@@ -16,7 +16,6 @@ import java.util.Map;
 @Data
 @Configuration
 public class JmsConfig {
-    
 
     @Bean
     @Primary

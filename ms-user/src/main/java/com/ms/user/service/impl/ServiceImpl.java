@@ -2,13 +2,11 @@ package com.ms.user.service.impl;
 
 
 import com.ms.user.config.HotelServiceFeing;
-import com.ms.user.dto.HotelDTO;
-import com.ms.user.dto.RankingDTO;
-import com.ms.user.dto.UserDTO;
-import com.ms.user.dto.UserRankingsDTO;
+import com.ms.user.dto.*;
 import com.ms.user.exception.MyHandleException;
 import com.ms.user.mapper.UserMapper;
 import com.ms.user.model.UserEntity;
+import com.ms.user.producer.IEmailProduce;
 import com.ms.user.repository.UserRepository;
 import com.ms.user.service.IUserService;
 import lombok.AllArgsConstructor;
@@ -34,6 +32,8 @@ public class ServiceImpl implements IUserService {
     private  final UserRepository userRepository;
 
     private final HotelServiceFeing hotelServiceFeing;
+
+    private IEmailProduce iEmailProduce;
     @Override
     public ResponseEntity create(UserDTO userDTO) {
 
@@ -96,7 +96,16 @@ public class ServiceImpl implements IUserService {
                 ).collect(Collectors.toList());
 
 
+
         userRankingsDTO.setRankings(rankings);
+
+        var  email  = JmsEmailDetails
+                .builder()
+                .name(user.getName())
+                .recipient(user.getEmail())
+                .emailType("welcome")
+                .build();
+        iEmailProduce.GenerateTransactionEmail(email);
         return userRankingsDTO;
     }
 
